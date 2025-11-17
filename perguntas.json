@@ -1,0 +1,91 @@
+[
+  {
+    "pergunta": "Pergunta 1: Quando você se apaixona, o que acontece primeiro?",
+    "respostas": {
+      "A": "Sinto vontade de entregar tudo e viver intensamente.",
+      "B": "Observo, analiso, vejo se a pessoa combina comigo.",
+      "C": "Quero cuidar, nutrir, estar presente o tempo todo.",
+      "D": "Sinto medo de perder minha liberdade e recuo.",
+      "E": "Fico sonhando, idealizando e me perco nas emoções.",
+      "F": "Busco segurança, compromisso, estabilidade.",
+      "G": "Prefiro ficar sozinha, no meu espaço interno."
+    }
+  },
+  {
+    "pergunta": "Pergunta 2: O que mais te fere em um relacionamento?",
+    "respostas": {
+      "A": "Sentir que não sou desejada.",
+      "B": "Sentir que não sou respeitada intelectualmente.",
+      "C": "Sentir que não sou necessária.",
+      "D": "Sentir que estão tentando me prender.",
+      "E": "Sentir que não sou compreendida emocionalmente.",
+      "F": "Sentir que não me valorizam como prioridade.",
+      "G": "Sentir que perco minha paz interior." 
+    }
+  },
+  {
+    "pergunta": "Pergunta 3: Quando algo dá errado no amor, sua reação mais comum é",
+    "respostas": {
+      "A": "Buscar outra conexão rapidamente.",
+      "B": "Fechar o coração e focar no trabalho.",
+      "C": "Tentar salvar, ajudar ou consertar o outro.",
+      "D": "Cortar o contato e seguir sozinha.",
+      "E": "Entrar em um ciclo de tristeza e espera.",
+      "F": "Lutar para manter a relação, mesmo desgastada.",
+      "G": "Recolher-se para refletir e se reconectar."
+    }
+  },
+  {
+    "pergunta": "Pergunta 4: O que o amor mais te ensina sobre você?",
+    "respostas": {
+      "A": "Que mereço ser desejada e admirada.",
+      "B": "Que preciso confiar mais nas emoções.",
+      "C": "Que não posso me anular para cuidar.",
+      "D": "Que posso ser livre e amar ao mesmo tempo.",
+      "E": "Que o outro é o espelho das minhas feridas.",
+      "F": "Que não existe controle sobre o amor.",
+      "G": "Que o amor começa em mim, no silêncio."
+    }
+  },
+  {
+    "pergunta": "Pergunta 5: Você se sente mais sozinha quando:",
+    "respostas": {
+      "A": "Ninguém enxerga seu brilho.",
+      "B": "Sente que precisa resolver tudo sozinha.",
+      "C": "Cuida demais e ninguém cuida de você.",
+      "D": "Ninguém entende sua necessidade de espaço.",
+      "E": "Ninguém te ouve emocionalmente.",
+      "F": "Ninguém fica — e isso te faz duvidar do seu valor.",
+      "G": "Está cercada de gente, mas desconectada espiritualmente."
+    }
+  },
+  {
+    "pergunta": "Pergunta 6:  O que te dá força para seguir?",
+    "respostas": {
+      "A": "Criar beleza e sentir prazer.",
+      "B": "Planejar e ter clareza mental.",
+      "C": "Ajudar e ver o outro florescer.",
+      "D": "Fazer algo sozinha e vencer.",
+      "E": "Acreditar que tudo tem um sentido oculto.",
+      "F": "Ter alguém ao meu lado, me apoiando.",
+      "G": "Estar em paz comigo mesma." 
+    }
+  },
+  {
+    "pergunta": "Pergunta 7: Se você pudesse mudar algo em si nos amores passados, seria:",
+    "respostas": {
+      "A": "Ter me valorizado mais.",
+      "B": "Ter sentido mais, pensado menos.",
+      "C": "Ter colocado limites.",
+      "D": "Ter permitido que alguém me conhecesse de verdade.",
+      "E": "Ter falado o que eu sentia.",
+      "F": "Ter amado sem tentar controlar.",
+      "G": "Ter me conectado espiritualmente com o outro."
+    }
+  }
+
+
+]
+
+
+

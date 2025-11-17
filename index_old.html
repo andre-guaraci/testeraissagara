@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Arquétipo das Deusas</title>
+    <style>
+        /* Um CSS mínimo para o teste funcionar visualmente */
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        #quiz-container h2 { margin-bottom: 20px; }
+        .resposta {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .resposta:hover { background-color: #eee; }
+        #resultado-container { background-color: #f4f4f4; padding: 20px; border-radius: 8px; }
+        #resultado-titulo { color: #333; }
+        #resultado-texto { white-space: pre-wrap; /* Isso preserva as quebras de linha do JSON */ }
+    </style>
+</head>
+<body>
+
+    <h1>Descubra seu Arquétipo</h1>
+
+    <div id="quiz-container">
+        <p>Carregando perguntas...</p>
+    </div>
+    
+    <div id="resultado-container" style="display:none;">
+        <h2>Seu Resultado:</h2>
+        <h3 id="resultado-titulo"></h3>
+        <p id="resultado-texto"></p>
+    </div>
+
+<script>
+    // --- Variáveis Globais ---
+    let perguntas = []; // Será preenchido pelo 'perguntas.json'
+    const quizContainer = document.getElementById('quiz-container');
+    const resultadoContainer = document.getElementById('resultado-container');
+    let perguntaAtual = 0;
+    let respostasUsuario = []; // Armazena as letras ('A', 'B', 'C'...)
+
+    /**
+     * Carrega a pergunta atual ou finaliza o quiz
+     */
+    function carregarPergunta() {
+        if (perguntaAtual >= perguntas.length) {
+            // Fim do quiz, enviar para o PHP
+            enviarResultados();
+            return;
+        }
+
+        const p = perguntas[perguntaAtual];
+        let htmlRespostas = '';
+        
+        // Cria os botões de resposta
+        for (const letra in p.respostas) {
+            // Usamos <button> para semântica, mas pode ser <div>
+            htmlRespostas += `<button class="resposta" data-letra="${letra}">
+                                <strong>${letra}:</strong> ${p.respostas[letra]}
+                              </button>`;
+        }
+
+        quizContainer.innerHTML = `
+            <h2>${p.pergunta} (${perguntaAtual + 1}/${perguntas.length})</h2>
+            ${htmlRespostas}
+        `;
+
+        // Adiciona o clique em cada botão de resposta
+        document.querySelectorAll('.resposta').forEach(button => {
+            button.addEventListener('click', () => {
+                respostasUsuario.push(button.dataset.letra); // Guarda a letra (ex: 'A')
+                perguntaAtual++; // Vai para a próxima pergunta
+                carregarPergunta(); // Recarrega a interface
+            });
+        });
+    }
+
+    /**
+     * Envia o array de respostas para o processar.php
+     */
+    async function enviarResultados() {
+        quizContainer.innerHTML = "<h2>Calculando seu resultado...</h2>";
+
+        try {
+            const response = await fetch('processar.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ respostas: respostasUsuario }) // Envia ex: {"respostas": ["A", "C", "A"...]}
+            });
+
+            const resultado = await response.json();
+
+            // 4. Exibição do Resultado
+            if (resultado.sucesso) {
+                document.getElementById('resultado-titulo').innerText = `Dominante: ${resultado.dominante} / Sombra: ${resultado.secundaria}`;
+                document.getElementById('resultado-texto').innerText = resultado.texto;
+                
+                quizContainer.style.display = 'none';
+                resultadoContainer.style.display = 'block';
+            } else {
+                quizContainer.innerHTML = `Ocorreu um erro ao processar seu teste: ${resultado.mensagem || ''}`;
+            }
+
+        } catch (error) {
+            console.error("Erro:", error);
+            quizContainer.innerHTML = "Ocorreu um erro de conexão. Tente recarregar a página.";
+        }
+    }
+
+    /**
+     * Ponto de entrada: Busca o JSON de perguntas e inicia o quiz
+     */
+    async function iniciarQuiz() {
+        try {
+            // 1. Busca o JSON de perguntas no servidor
+            const response = await fetch('perguntas.json');
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar as perguntas.');
+            }
+            perguntas = await response.json();
+            
+            // 2. Só então, carrega a primeira pergunta
+            if (perguntas.length > 0) {
+                carregarPergunta();
+            } else {
+                quizContainer.innerHTML = "<p>Erro: Arquivo de perguntas está vazio.</p>";
+            }
+
+        } catch (error) {
+            console.error("Erro ao carregar quiz:", error);
+            quizContainer.innerHTML = "<p>Erro fatal ao carregar o teste. Tente novamente.</p>";
+        }
+    }
+
+    // Inicia o quiz assim que a página carrega
+    iniciarQuiz();
+
+</script>
+</body>
+</html>
