@@ -141,3 +141,48 @@ button:hover {
     #quiz-container { padding: 25px; }
     button { font-size: 14px; }
 }
+
+/* --- Botão CTA (Call to Action) Especial --- */
+.cta-button {
+    display: block; /* Ocupa a largura toda */
+    width: 100%;
+    margin-top: 35px;
+    padding: 20px;
+    
+    /* Gradiente Dourado Místico */
+    background: linear-gradient(45deg, #b8860b, #d4af37, #f9df7b, #d4af37, #b8860b);
+    background-size: 300% 100%; /* Tamanho extra para a animação */
+    
+    color: #0a0510; /* Texto escuro para contraste com o dourado */
+    text-align: center;
+    text-decoration: none; /* Remove o sublinhado do link */
+    
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    
+    border: 1px solid #f9df7b;
+    border-radius: 4px;
+    
+    /* Sombra Dourada Pulsante */
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    
+    transition: all 0.4s ease;
+    animation: shimmer 4s infinite linear; /* Animação contínua */
+}
+
+/* Efeito ao passar o mouse */
+.cta-button:hover {
+    transform: scale(1.02); /* Aumenta levemente */
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.8); /* Brilho intenso */
+    color: #000;
+}
+
+/* Animação do brilho percorrendo o botão */
+@keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
