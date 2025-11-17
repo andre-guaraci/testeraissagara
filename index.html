@@ -4,68 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste de Arquétipo das Deusas</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
-        #quiz-container h2 { margin-bottom: 20px; }
-        .resposta {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 16px;
-            cursor: pointer;
-            text-align: left;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-        }
-        .resposta:hover { background-color: #eee; }
-        #resultado-container { background-color: #f4f4f4; padding: 20px; border-radius: 8px; }
-        #resultado-titulo { color: #333; }
-        #resultado-texto { white-space: pre-wrap; /* Isso preserva as quebras de linha do JSON */ }
-    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <h1>Descubra seu Arquétipo</h1>
 
     <div id="quiz-container">
-        <p>Carregando o teste...</p>
+        <p id="loading-msg">Carregando o teste...</p>
     </div>
     
     <div id="resultado-container" style="display:none;">
         <h2>Seu Resultado:</h2>
         <h3 id="resultado-titulo"></h3>
         <p id="resultado-texto"></p>
+        <button onclick="location.reload()" style="margin-top: 30px;">Refazer Teste</button>
     </div>
 
 <script>
     // --- Variáveis Globais ---
-    let perguntas = []; // Será preenchido pelo 'perguntas.json'
-    let textos = {};    // Será preenchido pelo 'textos.json'
+    let perguntas = [];
+    let textos = {};
     
     const quizContainer = document.getElementById('quiz-container');
     const resultadoContainer = document.getElementById('resultado-container');
     
     let perguntaAtual = 0;
-    let respostasUsuario = []; // Armazena as letras ('A', 'B', 'C'...)
+    let respostasUsuario = [];
 
-    // --- MAPA DE DEUSAS (antes estava no PHP) ---
+    // --- MAPA DE DEUSAS ---
     const mapaDeusas = {
-        'A': 'Afrodite',
-        'B': 'Atena',
-        'C': 'Deméter',
-        'D': 'Ártemis',
-        'E': 'Perséfone',
-        'F': 'Hera',
-        'G': 'Héstia'
+        'A': 'Afrodite', 'B': 'Atena', 'C': 'Deméter',
+        'D': 'Ártemis', 'E': 'Perséfone', 'F': 'Hera', 'G': 'Héstia'
     };
 
+    // --- LÓGICA DO QUIZ ---
+
     /**
-     * Ponto de entrada: Carrega os arquivos JSON e inicia o quiz
+     * Inicia automaticamente ao carregar a página
      */
     async function iniciarQuiz() {
         try {
-            // Carrega perguntas e textos ao mesmo tempo
+            // Busca os arquivos JSON
             const [resPerguntas, resTextos] = await Promise.all([
                 fetch('perguntas.json'),
                 fetch('textos.json')
@@ -78,7 +63,6 @@
             perguntas = await resPerguntas.json();
             textos = await resTextos.json();
 
-            // Inicia o quiz
             if (perguntas.length > 0) {
                 carregarPergunta();
             } else {
@@ -87,16 +71,12 @@
 
         } catch (error) {
             console.error("Erro ao carregar quiz:", error);
-            quizContainer.innerHTML = "<p>Erro fatal ao carregar o teste. Verifique se os arquivos 'perguntas.json' e 'textos.json' estão na mesma pasta.</p>";
+            quizContainer.innerHTML = "<p>Erro ao carregar o teste. Verifique se os arquivos 'perguntas.json' e 'textos.json' estão na pasta correta.</p>";
         }
     }
 
-    /**
-     * Carrega a pergunta atual ou finaliza o quiz
-     */
     function carregarPergunta() {
         if (perguntaAtual >= perguntas.length) {
-            // Fim do quiz, calcular e mostrar resultados
             mostrarResultados();
             return;
         }
@@ -111,35 +91,33 @@
         }
 
         quizContainer.innerHTML = `
-            <h2>${p.pergunta} (${perguntaAtual + 1}/${perguntas.length})</h2>
+            <h2>${p.pergunta}</h2>
+            <p style="text-align:center; color: #888; font-size: 0.9rem; margin-bottom: 20px;">
+                Pergunta ${perguntaAtual + 1} de ${perguntas.length}
+            </p>
             ${htmlRespostas}
         `;
 
-        // Adiciona o clique em cada botão de resposta
         document.querySelectorAll('.resposta').forEach(button => {
             button.addEventListener('click', () => {
-                respostasUsuario.push(button.dataset.letra); // Guarda a letra (ex: 'A')
+                respostasUsuario.push(button.dataset.letra);
                 perguntaAtual++;
                 carregarPergunta();
             });
         });
     }
 
-    /**
-     * Calcula e exibe o resultado final (LÓGICA DO PHP AGORA EM JS)
-     */
     function mostrarResultados() {
         quizContainer.innerHTML = "<h2>Calculando seu resultado...</h2>";
 
         try {
-            // --- 1. Contagem de Letras (equivalente ao array_count_values do PHP) ---
+            // Contagem
             const contagemLetras = respostasUsuario.reduce((acc, letra) => {
                 acc[letra] = (acc[letra] || 0) + 1;
                 return acc;
             }, {});
-            // Resultado ex: { A: 3, C: 1, F: 1, G: 1, B: 1 }
 
-            // --- 2. Mapear Letras para Deusas ---
+            // Mapeamento
             const contagemDeusas = {};
             for (const letra in contagemLetras) {
                 if (mapaDeusas[letra]) {
@@ -147,37 +125,38 @@
                     contagemDeusas[nomeDeusa] = contagemLetras[letra];
                 }
             }
-            // Resultado ex: { Afrodite: 3, Deméter: 1, Hera: 1, ... }
 
-            // --- 3. Ordenar para achar Dominante e Secundária (equivalente ao arsort) ---
+            // Ordenação
             const deusasOrdenadas = Object.entries(contagemDeusas).sort(([, countA], [, countB]) => countB - countA);
-            // Resultado ex: [ ['Afrodite', 3], ['Deméter', 1], ['Hera', 1], ... ]
+            
+            if (deusasOrdenadas.length === 0) throw new Error("Sem respostas válidas.");
 
-            // --- 4. Definir os arquétipos (com lógica "Pura") ---
-            const dominante = deusasOrdenadas[0][0]; // Pega o nome da Deusa
+            const dominante = deusasOrdenadas[0][0];
             const secundaria = deusasOrdenadas[1] ? deusasOrdenadas[1][0] : "Pura";
 
-            // --- 5. Buscar o Texto ---
-            // (O arquivo 'textos' já está carregado na memória)
+            // Busca Texto
             let textoResultado = "Erro: Combinação de texto não encontrada.";
             if (textos[dominante] && textos[dominante][secundaria]) {
                 textoResultado = textos[dominante][secundaria];
             }
             
-            // --- 6. Exibir na Tela ---
+            // Exibição
             document.getElementById('resultado-titulo').innerText = `Dominante: ${dominante} / Sombra: ${secundaria}`;
             document.getElementById('resultado-texto').innerText = textoResultado;
             
             quizContainer.style.display = 'none';
             resultadoContainer.style.display = 'block';
+            
+            // Rola a página para o topo para ver o resultado
+            window.scrollTo(0, 0);
 
         } catch (error) {
-            console.error("Erro ao calcular resultado:", error);
-            quizContainer.innerHTML = "Ocorreu um erro ao calcular seu resultado. Isso pode acontecer se você não respondeu nenhuma pergunta.";
+            console.error("Erro:", error);
+            quizContainer.innerHTML = "Ocorreu um erro ao calcular.";
         }
     }
 
-    // --- Inicia o Quiz! ---
+    // Inicia o fluxo imediatamente
     iniciarQuiz();
 
 </script>
