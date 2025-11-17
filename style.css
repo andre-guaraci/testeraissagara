@@ -186,3 +186,31 @@ button:hover {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+
+/* --- Arte do Resultado --- */
+.resultado-art-wrapper {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#resultado-imagem {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px; /* Limita a altura para não estourar a tela */
+    
+    border: 3px double var(--dourado); /* Borda dupla estilo moldura */
+    border-radius: 8px;
+    
+    box-shadow: 0 0 25px rgba(75, 0, 130, 0.5); /* Glow roxo atrás da imagem */
+    
+    display: block;
+    margin: 0 auto;
+    
+    /* Efeito suave ao carregar */
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

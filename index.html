@@ -22,13 +22,20 @@
     <div id="resultado-container" style="display:none;">
         <h2>Seu Resultado:</h2>
         <h3 id="resultado-titulo"></h3>
-        <p id="resultado-texto"></p>       
-        <button onclick="location.reload()" style="margin-top: 30px;">Refazer Teste</button>
-          <a href="https://raissagara.com.br/" class="cta-button" target="_blank">
-            ✨ Conheça a Raissa Gará ✨
+        
+        <div class="resultado-art-wrapper">
+            <img id="resultado-imagem" src="" alt="Arte do Arquétipo" onerror="this.style.display='none'">
+        </div>
+
+        <p id="resultado-texto"></p>      
+
+        <button onclick="location.reload()" style="margin-top: 30px; opacity: 0.7; font-size: 0.9rem;">
+            Refazer Teste
+        </button>
+         <a href="https://raissagara.com.br" class="cta-button" target="_blank">
+            ✨ Conheça Raissa Gará ✨
         </a>
     </div>
-   
 
 <script>
     // --- Variáveis Globais ---
@@ -42,19 +49,23 @@
     let respostasUsuario = [];
 
     // --- MAPA DE DEUSAS ---
+    // Relaciona a letra da resposta ao Nome da Deusa
     const mapaDeusas = {
-        'A': 'Afrodite', 'B': 'Atena', 'C': 'Deméter',
-        'D': 'Ártemis', 'E': 'Perséfone', 'F': 'Hera', 'G': 'Héstia'
+        'A': 'Afrodite', 
+        'B': 'Atena', 
+        'C': 'Deméter',
+        'D': 'Ártemis', 
+        'E': 'Perséfone', 
+        'F': 'Hera', 
+        'G': 'Héstia'
     };
 
-    // --- LÓGICA DO QUIZ ---
-
-    /**
-     * Inicia automaticamente ao carregar a página
-     */
+    // --- INICIALIZAÇÃO ---
+    
+    // Função que inicia tudo assim que a página carrega
     async function iniciarQuiz() {
         try {
-            // Busca os arquivos JSON
+            // Carrega os dois arquivos JSON simultaneamente
             const [resPerguntas, resTextos] = await Promise.all([
                 fetch('perguntas.json'),
                 fetch('textos.json')
@@ -67,10 +78,11 @@
             perguntas = await resPerguntas.json();
             textos = await resTextos.json();
 
+            // Se carregou com sucesso, mostra a primeira pergunta
             if (perguntas.length > 0) {
                 carregarPergunta();
             } else {
-                quizContainer.innerHTML = "<p>Erro: Arquivo de perguntas está vazio.</p>";
+                quizContainer.innerHTML = "<p>Erro: O arquivo de perguntas está vazio.</p>";
             }
 
         } catch (error) {
@@ -79,7 +91,10 @@
         }
     }
 
+    // --- LÓGICA DAS PERGUNTAS ---
+
     function carregarPergunta() {
+        // Se acabaram as perguntas, mostra o resultado
         if (perguntaAtual >= perguntas.length) {
             mostrarResultados();
             return;
@@ -88,12 +103,14 @@
         const p = perguntas[perguntaAtual];
         let htmlRespostas = '';
         
+        // Gera os botões HTML para cada resposta
         for (const letra in p.respostas) {
             htmlRespostas += `<button class="resposta" data-letra="${letra}">
                                 <strong>${letra}:</strong> ${p.respostas[letra]}
                               </button>`;
         }
 
+        // Injeta o HTML na tela
         quizContainer.innerHTML = `
             <h2>${p.pergunta}</h2>
             <p style="text-align:center; color: #888; font-size: 0.9rem; margin-bottom: 20px;">
@@ -102,26 +119,29 @@
             ${htmlRespostas}
         `;
 
+        // Adiciona o evento de clique nos botões gerados
         document.querySelectorAll('.resposta').forEach(button => {
             button.addEventListener('click', () => {
-                respostasUsuario.push(button.dataset.letra);
-                perguntaAtual++;
-                carregarPergunta();
+                respostasUsuario.push(button.dataset.letra); // Salva a resposta
+                perguntaAtual++; // Avança o contador
+                carregarPergunta(); // Carrega a próxima
             });
         });
     }
+
+    // --- CÁLCULO E EXIBIÇÃO DOS RESULTADOS ---
 
     function mostrarResultados() {
         quizContainer.innerHTML = "<h2>Calculando seu resultado...</h2>";
 
         try {
-            // Contagem
+            // 1. Conta quantas vezes cada letra foi escolhida
             const contagemLetras = respostasUsuario.reduce((acc, letra) => {
                 acc[letra] = (acc[letra] || 0) + 1;
                 return acc;
             }, {});
 
-            // Mapeamento
+            // 2. Converte as letras para nomes de Deusas
             const contagemDeusas = {};
             for (const letra in contagemLetras) {
                 if (mapaDeusas[letra]) {
@@ -130,37 +150,54 @@
                 }
             }
 
-            // Ordenação
+            // 3. Ordena do maior para o menor para achar a vencedora
             const deusasOrdenadas = Object.entries(contagemDeusas).sort(([, countA], [, countB]) => countB - countA);
             
             if (deusasOrdenadas.length === 0) throw new Error("Sem respostas válidas.");
 
+            // 4. Define Dominante e Secundária
             const dominante = deusasOrdenadas[0][0];
+            // Se não tiver segunda colocada, define como "Pura"
             const secundaria = deusasOrdenadas[1] ? deusasOrdenadas[1][0] : "Pura";
 
-            // Busca Texto
+            // 5. Busca o Texto no JSON
             let textoResultado = "Erro: Combinação de texto não encontrada.";
             if (textos[dominante] && textos[dominante][secundaria]) {
                 textoResultado = textos[dominante][secundaria];
             }
             
-            // Exibição
+            // 6. Configura a Imagem do Resultado
+            const imgElement = document.getElementById('resultado-imagem');
+            
+            // Remove acentos para o nome do arquivo (Ex: "Deméter" vira "Demeter")
+            const domLimpo = removerAcentos(dominante);
+            const secLimpo = removerAcentos(secundaria);
+            
+            // Define o caminho: img/Afrodite_Atena.jpg
+            imgElement.src = `img/${domLimpo}_${secLimpo}.jpg`;
+            imgElement.style.display = 'block';
+
+            // 7. Preenche os textos na tela
             document.getElementById('resultado-titulo').innerText = `Dominante: ${dominante} / Sombra: ${secundaria}`;
             document.getElementById('resultado-texto').innerText = textoResultado;
             
+            // 8. Troca as telas e rola para o topo
             quizContainer.style.display = 'none';
             resultadoContainer.style.display = 'block';
-            
-            // Rola a página para o topo para ver o resultado
             window.scrollTo(0, 0);
 
         } catch (error) {
             console.error("Erro:", error);
-            quizContainer.innerHTML = "Ocorreu um erro ao calcular.";
+            quizContainer.innerHTML = "Ocorreu um erro ao calcular o resultado. Tente atualizar a página.";
         }
     }
 
-    // Inicia o fluxo imediatamente
+    // Função auxiliar para limpar nomes de arquivos (Remove acentos)
+    function removerAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // Inicia o quiz automaticamente
     iniciarQuiz();
 
 </script>
