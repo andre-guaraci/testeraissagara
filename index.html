@@ -13,9 +13,32 @@
 </head>
 <body>
 
-    <h1>Descubra seu Arquétipo</h1>
+    <h1>Qual é o Padrão Oculto que Sabota seus Relacionamentos?</h1>
 
-    <div id="quiz-container">
+    <div id="intro-container">
+        <h2>Vamos descobrir juntas o seu padrão de amar.</h2>
+
+        <p>Vamos descobrir juntas o seu padrão de amar e analisar os sinais que revelam como você se relaciona.</p>
+
+        <p>Este é um teste gratuito, baseado nos arquétipos das Deusas Gregas, desenvolvidos pela psiquiatra junguiana Jean Shinoda Bolen, que refletem diferentes formas de amar e se relacionar.</p>
+
+        <p style="text-align: center; font-weight: bold;">Responda apenas 7 perguntas rápidas e precisas.</p>
+
+        <div class="intro-warning-box">
+            <h3>⚠ No final, você receberá:</h3>
+            <ul>
+                <li>Sua Deusa Principal, que revela como você ama.</li>
+                <li>A Sombra que bloqueia seus relacionamentos.</li>
+                <li>Um mapa claro do seu padrão de amor, pronto para começar a transformação.</li>
+            </ul>
+        </div>
+
+        <p class="intro-tip">‼ Dica importante: responda com atenção e honestidade, refletindo sobre cada pergunta. Só você terá acesso às suas respostas.</p>
+        
+        <button id="start-button">Iniciar Teste Agora</button>
+    </div>
+
+    <div id="quiz-container" style="display:none;">
         <p id="loading-msg">Carregando o teste...</p>
     </div>
     
@@ -27,14 +50,15 @@
             <img id="resultado-imagem" src="" alt="Arte do Arquétipo" onerror="this.style.display='none'">
         </div>
 
-        <p id="resultado-texto"></p>      
+        <p id="resultado-texto"></p>
+        
+        <a href="https://raissagara.hotmart.host/nova-pagina-5898d9d8-7196-45f5-baef-ae4834adfb3e" class="cta-button" target="_blank">
+            ✨ Me identifiquei quero saber mais ✨
+        </a>
 
         <button onclick="location.reload()" style="margin-top: 30px; opacity: 0.7; font-size: 0.9rem;">
             Refazer Teste
         </button>
-         <a href="https://raissagara.com.br" class="cta-button" target="_blank">
-            ✨ Conheça Raissa Gará ✨
-        </a>
     </div>
 
 <script>
@@ -42,6 +66,9 @@
     let perguntas = [];
     let textos = {};
     
+    // Elementos do fluxo
+    const introContainer = document.getElementById('intro-container');
+    const startButton = document.getElementById('start-button');
     const quizContainer = document.getElementById('quiz-container');
     const resultadoContainer = document.getElementById('resultado-container');
     
@@ -49,23 +76,25 @@
     let respostasUsuario = [];
 
     // --- MAPA DE DEUSAS ---
-    // Relaciona a letra da resposta ao Nome da Deusa
     const mapaDeusas = {
-        'A': 'Afrodite', 
-        'B': 'Atena', 
-        'C': 'Deméter',
-        'D': 'Ártemis', 
-        'E': 'Perséfone', 
-        'F': 'Hera', 
-        'G': 'Héstia'
+        'A': 'Afrodite', 'B': 'Atena', 'C': 'Deméter',
+        'D': 'Ártemis', 'E': 'Perséfone', 'F': 'Hera', 'G': 'Héstia'
     };
 
-    // --- INICIALIZAÇÃO ---
-    
-    // Função que inicia tudo assim que a página carrega
+    // --- FLUXO PRINCIPAL ---
+
+    // 1. Adiciona o listener para o botão de iniciar
+    startButton.addEventListener('click', startTest);
+
+    function startTest() {
+        introContainer.style.display = 'none'; // Esconde a introdução
+        quizContainer.style.display = 'block'; // Mostra o container de carregamento do quiz
+        iniciarQuiz(); // Inicia o carregamento dos dados e do quiz
+    }
+
+    // 2. Lógica para carregar os dados JSON (continua a mesma)
     async function iniciarQuiz() {
         try {
-            // Carrega os dois arquivos JSON simultaneamente
             const [resPerguntas, resTextos] = await Promise.all([
                 fetch('perguntas.json'),
                 fetch('textos.json')
@@ -78,7 +107,6 @@
             perguntas = await resPerguntas.json();
             textos = await resTextos.json();
 
-            // Se carregou com sucesso, mostra a primeira pergunta
             if (perguntas.length > 0) {
                 carregarPergunta();
             } else {
@@ -90,11 +118,9 @@
             quizContainer.innerHTML = "<p>Erro ao carregar o teste. Verifique se os arquivos 'perguntas.json' e 'textos.json' estão na pasta correta.</p>";
         }
     }
-
-    // --- LÓGICA DAS PERGUNTAS ---
-
+    
+    // 3. Lógica para carregar as perguntas
     function carregarPergunta() {
-        // Se acabaram as perguntas, mostra o resultado
         if (perguntaAtual >= perguntas.length) {
             mostrarResultados();
             return;
@@ -103,14 +129,12 @@
         const p = perguntas[perguntaAtual];
         let htmlRespostas = '';
         
-        // Gera os botões HTML para cada resposta
         for (const letra in p.respostas) {
             htmlRespostas += `<button class="resposta" data-letra="${letra}">
                                 <strong>${letra}:</strong> ${p.respostas[letra]}
                               </button>`;
         }
 
-        // Injeta o HTML na tela
         quizContainer.innerHTML = `
             <h2>${p.pergunta}</h2>
             <p style="text-align:center; color: #888; font-size: 0.9rem; margin-bottom: 20px;">
@@ -119,29 +143,25 @@
             ${htmlRespostas}
         `;
 
-        // Adiciona o evento de clique nos botões gerados
         document.querySelectorAll('.resposta').forEach(button => {
             button.addEventListener('click', () => {
-                respostasUsuario.push(button.dataset.letra); // Salva a resposta
-                perguntaAtual++; // Avança o contador
-                carregarPergunta(); // Carrega a próxima
+                respostasUsuario.push(button.dataset.letra);
+                perguntaAtual++;
+                carregarPergunta();
             });
         });
     }
 
-    // --- CÁLCULO E EXIBIÇÃO DOS RESULTADOS ---
-
+    // 4. Lógica de cálculo e exibição de resultados
     function mostrarResultados() {
         quizContainer.innerHTML = "<h2>Calculando seu resultado...</h2>";
 
         try {
-            // 1. Conta quantas vezes cada letra foi escolhida
             const contagemLetras = respostasUsuario.reduce((acc, letra) => {
                 acc[letra] = (acc[letra] || 0) + 1;
                 return acc;
             }, {});
 
-            // 2. Converte as letras para nomes de Deusas
             const contagemDeusas = {};
             for (const letra in contagemLetras) {
                 if (mapaDeusas[letra]) {
@@ -150,38 +170,28 @@
                 }
             }
 
-            // 3. Ordena do maior para o menor para achar a vencedora
             const deusasOrdenadas = Object.entries(contagemDeusas).sort(([, countA], [, countB]) => countB - countA);
             
             if (deusasOrdenadas.length === 0) throw new Error("Sem respostas válidas.");
 
-            // 4. Define Dominante e Secundária
             const dominante = deusasOrdenadas[0][0];
-            // Se não tiver segunda colocada, define como "Pura"
             const secundaria = deusasOrdenadas[1] ? deusasOrdenadas[1][0] : "Pura";
 
-            // 5. Busca o Texto no JSON
             let textoResultado = "Erro: Combinação de texto não encontrada.";
             if (textos[dominante] && textos[dominante][secundaria]) {
                 textoResultado = textos[dominante][secundaria];
             }
             
-            // 6. Configura a Imagem do Resultado
             const imgElement = document.getElementById('resultado-imagem');
-            
-            // Remove acentos para o nome do arquivo (Ex: "Deméter" vira "Demeter")
             const domLimpo = removerAcentos(dominante);
             const secLimpo = removerAcentos(secundaria);
             
-            // Define o caminho: img/Afrodite_Atena.jpg
             imgElement.src = `img/${domLimpo}_${secLimpo}.jpg`;
             imgElement.style.display = 'block';
 
-            // 7. Preenche os textos na tela
-            document.getElementById('resultado-titulo').innerText = `Dominante: ${dominante} / Sombra: ${secundaria}`;
-            document.getElementById('resultado-texto').innerText = textoResultado;
+            document.getElementById('resultado-titulo').innerHTML = `Dominante: ${dominante} / Sombra: ${secundaria}`;
+            document.getElementById('resultado-texto').innerHTML = textoResultado;
             
-            // 8. Troca as telas e rola para o topo
             quizContainer.style.display = 'none';
             resultadoContainer.style.display = 'block';
             window.scrollTo(0, 0);
@@ -192,13 +202,10 @@
         }
     }
 
-    // Função auxiliar para limpar nomes de arquivos (Remove acentos)
+    // Função auxiliar para remover acentos (para nomear arquivos)
     function removerAcentos(texto) {
         return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
-
-    // Inicia o quiz automaticamente
-    iniciarQuiz();
 
 </script>
 </body>

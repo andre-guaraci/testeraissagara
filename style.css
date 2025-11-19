@@ -214,3 +214,83 @@ button:hover {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- Estilos para a Página de Introdução --- */
+/* Estende o estilo de card para a introdução */
+#intro-container {
+    background-color: var(--cor-card);
+    padding: 40px;
+    border-radius: 4px;
+    border: 1px solid var(--dourado);
+    box-shadow: 0 0 20px rgba(75, 0, 130, 0.3);
+    max-width: 700px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* Garante que o efeito de borda dupla funcione na intro */
+#intro-container::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    pointer-events: none;
+}
+
+#intro-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.intro-tip {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--dourado-brilho);
+    text-align: center !important;
+    margin-top: 30px;
+}
+
+.intro-warning-box {
+    background-color: rgba(75, 0, 130, 0.15); /* Fundo roxo suave */
+    border-left: 5px solid var(--roxo-destaque);
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.intro-warning-box h3 {
+    font-size: 1.2rem;
+    color: var(--roxo-destaque);
+    margin-top: 0;
+}
+
+.intro-warning-box ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+/* Ponto de âncora nos itens de lista */
+.intro-warning-box li::before {
+    content: "✦";
+    color: var(--dourado);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* O botão já usa o estilo padrão, mas garantimos que o ID funcione */
+#start-button {
+    margin-top: 30px;
+    font-size: 1.1rem;
+}
+
+/* Ajuste no título principal, que agora usa o texto da introdução */
+body h1 {
+    font-size: 2rem;
+    line-height: 1.3;
+}
